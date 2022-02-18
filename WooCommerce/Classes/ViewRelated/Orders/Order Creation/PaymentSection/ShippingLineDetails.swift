@@ -21,31 +21,23 @@ struct ShippingLineDetails: View {
     }
 
     var body: some View {
+        let shippingAmount = Binding<String>(get: {
+            // This almost works, but it doesn't respect the store's "Number of decimals" setting
+            viewModel.formattedAmount
+        }, set: {
+            viewModel.amount = viewModel.priceFieldFormatter.formatAmount($0)
+        })
+
         NavigationView {
             ScrollView {
                 VStack(spacing: .zero) {
                     Section {
                         Group {
-                            ZStack(alignment: .center) {
-                                // Hidden input text field
-                                BindableTextfield("", text: $viewModel.amount, focus: $focusAmountInput)
-                                    .keyboardType(.decimalPad)
-                                    .opacity(0)
-
-                                // Visible & formatted field
-                                TitleAndTextFieldRow(title: Localization.amountField,
-                                                     placeholder: "",
-                                                     text: .constant(viewModel.formattedAmount),
-                                                     symbol: nil,
-                                                     keyboardType: .decimalPad)
-                                    .foregroundColor(Color(viewModel.amountTextColor))
-                                    .disabled(true)
-                            }
-                            .background(Color(.listForeground))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .onTapGesture {
-                                focusAmountInput = true
-                            }
+                            TitleAndTextFieldRow(title: Localization.amountField,
+                                                 placeholder: viewModel.formattedAmount,
+                                                 text: shippingAmount,
+                                                 symbol: nil,
+                                                 keyboardType: .decimalPad)
 
                             Divider()
                                 .padding(.leading, Layout.dividerPadding)

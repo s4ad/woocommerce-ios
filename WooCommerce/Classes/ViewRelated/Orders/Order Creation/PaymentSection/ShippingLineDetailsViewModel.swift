@@ -9,22 +9,20 @@ class ShippingLineDetailsViewModel: ObservableObject {
 
     /// Helper to format price field input.
     ///
-    private let priceFieldFormatter: PriceFieldFormatter
+    let priceFieldFormatter: PriceFieldFormatter
 
     /// Formatted amount to display. When empty displays a placeholder value.
     ///
     var formattedAmount: String {
-        priceFieldFormatter.formattedAmount
+        guard amount.isNotEmpty else {
+            return amount
+        }
+        return priceFieldFormatter.formattedAmount
     }
 
     /// Stores the amount(unformatted) entered by the merchant.
     ///
-    @Published var amount: String = "" {
-        didSet {
-            guard amount != oldValue else { return }
-            amount = priceFieldFormatter.formatAmount(amount)
-        }
-    }
+    @Published var amount: String = ""
 
     /// Defines the amount text color.
     ///
